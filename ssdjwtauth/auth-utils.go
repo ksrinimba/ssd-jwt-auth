@@ -4,7 +4,7 @@ package ssdjwtauth
 import "github.com/golang-jwt/jwt/v5"
 
 // Given user groups and admin groups, return true if user is an Admin
-func IsUserAnAdmin(userGroups, adminGroups []string) bool {
+func IsUserAnAdmin(userGroups []string) bool {
 	found := false
 	for _, element := range userGroups { // With 3 admin groups, 1500 user groups, we have 4500 iterations!!
 		for _, usergrp := range adminGroups {

@@ -73,8 +73,8 @@ func GetUserJWT(uid string, groups []string, lifeTime uint) (string, error) {
 	sut := &SsdUserToken{}
 	sut.Uid = uid
 	sut.Groups = groups
-	sut.OrgID = "NoAPIAvailableYET"                      // Need to call an API to get an Org of a USER??
-	sut.IsAdmin = IsUserAnAdmin(sut.Groups, adminGroups) // Set the IsAdmin flag
+	sut.OrgID = "NoAPIAvailableYET"         // Need to call an API to get an Org of a USER??
+	sut.IsAdmin = IsUserAnAdmin(sut.Groups) // Set the IsAdmin flag
 	sut.Type = SSDTokenTypeUser
 	// claims := getLoginClaims(sut)
 	tmpDuration := sessionTimeout
