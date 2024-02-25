@@ -1,7 +1,9 @@
-// This package (mostyly) is be used for all service-to-service authentication
+// This ssdjwtauth package (mostyly) is be used for all service-to-service authentication
 // and moving other attributes around such as groups, orgID,etc.
 // Specifications: https://docs.google.com/document/d/1uuKitg7G0m6GzXM0BYzbsyEogZeUhthy7LSUTgnRtuQ/edit#heading=h.imy018wzvh86
 // We have jwt-create.go - create various types of JWTs, auth.go - methods other services can call
+// This main program is meant to test and also give examples of usage of the token creation and decoding
+
 package main
 
 import (
@@ -25,7 +27,9 @@ func main() { // TODO: change to a demo/test method
 	// TODO: Replace HMAC with cert+key
 	ssdjwtauth.InitJWTSecret("myHmacSecret", []string{"admin", "bigboss"}, 3600, 3600*24*30, 30)
 	create3TypeOfTokens()
-	decode3TypeOfTokens()
+	testUserInfoFromSSDToken(uTokenStr)
+	testServiceInfoFromSSDToken(sTokenStr)
+	// testServiceInfo(sTokenStr)
 	// Now to Decode and get info
 	// Failure test-cases: create tokens with wrong issuer??
 }
@@ -55,12 +59,15 @@ func decode3TypeOfTokens() {
 		case ssdjwtauth.SSDTokenTypeUser:
 			sut, err := ssdjwtauth.GetSsdUserToken(m)
 			log.Printf("Valid User Token:%+v:Error=%v", sut, err)
+			// return sut
 		case ssdjwtauth.SSDTokenTypeService:
 			sut, err := ssdjwtauth.GetSsdServiceToken(m)
 			log.Printf("Valid Service Token:%+v:Error=%v", sut, err)
+			// return sut
 		case ssdjwtauth.SSDTokenTypeInternal:
 			sut, err := ssdjwtauth.GetSsdInternalToken(m)
 			log.Printf("Valid User Token:%+v:Error=%v", sut, err)
+			// return sut
 		}
 	}
 }
@@ -95,4 +102,56 @@ func create3TypeOfTokens() {
 		// take the token strings and decode and print contents
 		log.Printf("Internal Token Created: %s", iTokenStr)
 	}
+}
+
+func testUserInfo(tokenStr string) {
+	uid, groups, orgId, isAdmin, err := ssdjwtauth.GetUserTokenInfo(tokenStr)
+	log.Printf("User ID: %s", uid)
+	log.Printf("User Groups: %v", groups)
+	log.Printf("User orgId: %s", orgId)
+	log.Printf("User isAdmin: %v", isAdmin)
+	log.Printf("Error: %v", err)
+}
+
+func testServiceInfo(tokenStr string) {
+	sr, inst, orgId, err := ssdjwtauth.GetServiceTokenInfo(tokenStr)
+	log.Printf("Service: %s", sr)
+	log.Printf("Instance: %v", inst)
+	log.Printf("User orgId: %s", orgId)
+	log.Printf("Error: %v", err)
+}
+
+func testServiceInfoFromSSDToken(tokenStr string) {
+	tok, err := ssdjwtauth.DecodeToken(tokenStr)
+	if err != nil {
+		log.Println("We are screwed")
+		return
+	}
+	if tok.GetTokenType() != ssdjwtauth.SSDTokenTypeService {
+		log.Println("We were expecting a ServiceToken but apparently it is not")
+		return
+	}
+	sr, inst, orgId, err := ssdjwtauth.GetServiceInfoFromSSDToken(tok)
+	log.Printf("Service: %s", sr)
+	log.Printf("Instance: %v", inst)
+	log.Printf("User orgId: %s", orgId)
+	log.Printf("Error: %v", err)
+}
+
+func testUserInfoFromSSDToken(tokenStr string) {
+	tok, err := ssdjwtauth.DecodeToken(tokenStr)
+	if err != nil {
+		log.Println("We are screwed")
+		return
+	}
+	if tok.GetTokenType() != ssdjwtauth.SSDTokenTypeUser {
+		log.Println("We were expecting a ServiceToken but apparently it is not")
+		return
+	}
+	uid, groups, orgId, isAdmin, err := ssdjwtauth.GetUserInfoFromSSDToken(tok)
+	log.Printf("User ID: %s", uid)
+	log.Printf("User Groups: %v", groups)
+	log.Printf("User orgId: %s", orgId)
+	log.Printf("User isAdmin: %v", isAdmin)
+	log.Printf("Error: %v", err)
 }
