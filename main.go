@@ -77,7 +77,7 @@ func create3TypeOfTokens() {
 	log.Println("use jwt.io, debugger to see the token, epochconverter.com to check the expiry")
 	// Create tokens of each type - user
 	var err error
-	uTokenStr, err = ssdjwtauth.GetUserJWT("ksrinimba", []string{"dev", "qa"}, 365)
+	uTokenStr, err = ssdjwtauth.CreateUserJWT("ksrinimba", []string{"dev", "qa"}, 365)
 	if err != nil {
 		log.Printf("User Token Creation Error:%v", err)
 	} else {
@@ -86,7 +86,7 @@ func create3TypeOfTokens() {
 	}
 
 	// Create tokens of each type - Service
-	sTokenStr, err = ssdjwtauth.GetServiceJWT("jenkins", "456789", "NoAPIAvailableYET")
+	sTokenStr, err = ssdjwtauth.CreateServiceJWT("jenkins", "456789", "NoAPIAvailableYET")
 	if err != nil {
 		log.Printf("Service Token Creation Error:%v", err)
 	} else {
@@ -95,7 +95,7 @@ func create3TypeOfTokens() {
 	}
 
 	// Create tokens of each type - Internal
-	iTokenStr, err = ssdjwtauth.GetInternalJWT("ssd-opa", true)
+	iTokenStr, err = ssdjwtauth.CreateInternalJWT("ssd-opa", true)
 	if err != nil {
 		log.Printf("Internal Token Creation Error:%v", err)
 	} else {
