@@ -82,7 +82,7 @@ func GetUserFromReqHeader(r *http.Request) (string, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok { // Validate method
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return hmacSecret, nil
+		return []byte(hmacSecret), nil
 	})
 
 	if err != nil {

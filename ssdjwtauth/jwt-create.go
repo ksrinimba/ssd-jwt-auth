@@ -61,6 +61,7 @@ type SsdJwtClaims struct {
 // All token types implement this interface
 type SSDToken interface {
 	GetTokenType() string
+	IsAdminToken() bool
 }
 
 // Interface to get a type, without know what that type is
@@ -70,8 +71,21 @@ func (t SsdUserToken) GetTokenType() string {
 func (t SsdServiceToken) GetTokenType() string {
 	return t.Type
 }
+
 func (t SsdInternalToken) GetTokenType() string {
 	return t.Type
+}
+
+func (t SsdUserToken) IsAdminToken() bool {
+	return t.IsAdmin
+}
+
+func (t SsdServiceToken) IsAdminToken() bool {
+	return false // In Service Token, there is NO admin or not-admin, they are never admins
+}
+
+func (t SsdInternalToken) IsAdminToken() bool {
+	return t.IsAdmin
 }
 
 // Create a new JWT and return a base64 encoded string.
